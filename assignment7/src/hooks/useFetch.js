@@ -10,6 +10,7 @@ function reducer(state, action) {
 }
 // Pass a stable API function; inputs are its arguments before the AbortSignal.
 export function useFetch(fetcher, inputs = []) {
+  const [attempt, retry] = useReducer(value => value + 1, 0);
   const [state, dispatch] = useReducer(reducer, initial);
   useEffect(() => {
     const controller = new AbortController();
@@ -23,6 +24,6 @@ export function useFetch(fetcher, inputs = []) {
     return () => { active = false; controller.abort(); };
     // The caller supplies the dependency inputs, like useEffect.
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [fetcher, ...inputs]);
-  return state;
+  }, [fetcher, attempt, ...inputs]);
+  return { ...state, retry };
 }
