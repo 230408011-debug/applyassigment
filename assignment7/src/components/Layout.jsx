@@ -4,8 +4,9 @@ import { useLocalStorage } from '../hooks/useLocalStorage';
 export default function Layout() {
   const [theme, setTheme] = useLocalStorage('assignment7-theme', 'light', value => value === 'light' || value === 'dark');
   return <div className={`app ${theme === 'dark' ? 'dark' : 'light'}`}>
+    <a className="skip-link" href="#main">Skip to content</a>
     <NavBar theme={theme} toggleTheme={() => setTheme(value => value === 'dark' ? 'light' : 'dark')} />
-    <main id="main"><Outlet /></main>
+    <main id="main" tabIndex={-1}><Outlet /></main>
     <footer>Özcan Öztürk · 230408011 <span>Web Programming · Assignment 7 · Fall 2026</span></footer>
   </div>;
 }
