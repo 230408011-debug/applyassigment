@@ -1,9 +1,12 @@
 import { useEffect, useState } from 'react';
-export function useLocalStorage(key, initialValue) {
+export function useLocalStorage(key, initialValue, validate = () => true) {
   const [value, setValue] = useState(() => {
     try {
       const saved = localStorage.getItem(key);
-      return saved === null ? (typeof initialValue === 'function' ? initialValue() : initialValue) : JSON.parse(saved);
+      const fallback = () => typeof initialValue === 'function' ? initialValue() : initialValue;
+      if (saved === null) return fallback();
+      const parsed = JSON.parse(saved);
+      return validate(parsed) ? parsed : fallback();
     } catch { return typeof initialValue === 'function' ? initialValue() : initialValue; }
   });
   useEffect(() => {
