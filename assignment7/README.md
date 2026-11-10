@@ -30,7 +30,8 @@ assignment7/
 │   ├── hooks/         useFetch.js, useLocalStorage.js
 │   ├── context/       AuthContext.jsx
 │   ├── store/         cartStore.js
-│   ├── components/    Layout.jsx, NavBar.jsx, ProductCard.jsx, ProtectedRoute.jsx
+│   ├── utils/         formatPrice.js
+│   ├── components/    Layout.jsx, NavBar.jsx, ProductCard.jsx, ProtectedRoute.jsx, ProductImage.jsx
 │   ├── pages/         Home.jsx, ProductList.jsx, ProductDetail.jsx,
 │   │                  Cart.jsx, Login.jsx, NotFound.jsx
 │   ├── App.jsx
@@ -84,8 +85,12 @@ This README and implementation were prepared with AI assistance. The reasoning a
 
 ## Git workflow status
 
-The supplied repository was empty when inspected. A newly prepared implementation does not establish the assignment's mandatory 14 meaningful commits with progress spread over time, and commit timestamps have not been backdated. The stated deadline was 8 November 2026 at 23:59; confirm late-submission arrangements with the instructor.
+The supplied repository was empty when first inspected. The repository now contains 14 commits, including separate improvements for accessible cart feedback, currency formatting, image fallbacks, validated theme storage, keyboard navigation, request retries, and pending login behavior. These recent commits do not establish progress spread over the assignment period, and commit timestamps have not been backdated. The stated deadline was 8 November 2026 at 23:59; confirm late-submission arrangements with the instructor.
 
 ## Validation
 
 See `VALIDATION.md` for the executed checks and their limits. Generated node_modules and dist folders are excluded from Git.
+
+## Follow-up improvements
+
+Products use a shared USD formatter, and cart additions and total changes provide accessible feedback. Missing images have a fallback, invalid stored theme values reset to light, and a skip link supports keyboard users. Catalogue and detail requests can be retried without changing the current URL; login prevents duplicate submissions and disables inputs while pending.

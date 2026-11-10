@@ -8,3 +8,10 @@
 - Live Chromium network requests were blocked by the managed environment's proxy certificate (`ERR_CERT_AUTHORITY_INVALID`); the application displayed its fetch-error message. Browser certificate verification was not disabled. Consequently a complete live browser/API integration check remains unverified in this environment.
 
 The browser checks were run from a separate scratch tool directory; Playwright is not a runtime dependency of the submitted application. The manual equivalents are to search/filter products, refresh the URL, add items, sign in from the cart redirect, edit quantities, refresh again, switch theme, visit `/products/999999`, and visit an unknown route.
+
+## Follow-up validation — 10 November 2026
+
+- Production build and Oxlint passed after the improvements.
+- The original controlled-response browser regression checks passed again.
+- Additional Chromium checks passed for catalogue/detail retries, preserving the query on retry, invalid stored theme recovery, missing image fallback, card/detail add announcements, pending login disabled controls, named removal buttons, empty cart after removal, and keyboard skip-link focus.
+- All new commits contain actual implementation or documentation changes. The numerical 14-commit requirement does not demonstrate development spread over the assignment period.
