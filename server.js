@@ -23,6 +23,14 @@ app.get('/hello', (req, res) => {
   res.type('text/plain').send("Hello from Özcan Öztürk's server");
 });
 
+app.get('/robots.txt', (req, res) => {
+  res.type('text/plain').send('User-agent: *\nAllow: /\n');
+});
+
+app.get('/old-page', (req, res) => {
+  res.redirect(302, '/hello');
+});
+
 app.listen(port, () => {
   console.log(`Study programme server: http://localhost:${port}`);
 });
