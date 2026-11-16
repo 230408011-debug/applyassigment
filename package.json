@@ -1,0 +1,17 @@
+{
+  "name": "assignment8",
+  "version": "1.0.0",
+  "description": "Assignment 8 study programme information server",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node --watch server.js"
+  },
+  "keywords": [],
+  "author": "Özcan Öztürk",
+  "license": "ISC",
+  "type": "module",
+  "engines": {
+    "node": ">=24"
+  }
+}
