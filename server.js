@@ -1,4 +1,5 @@
 import express from 'express';
+import { fileURLToPath } from 'node:url';
 
 const app = express();
 const port = process.env.PORT || 3000;
@@ -24,6 +25,10 @@ function requestCounter(req, res, next) {
 
 app.use(requestLogger);
 app.use(requestCounter);
+
+// Resolve from this file, not from the terminal working directory.
+const publicDirectory = fileURLToPath(new URL('./public/', import.meta.url));
+app.use(express.static(publicDirectory));
 
 app.get('/hello', (req, res) => {
   res.type('text/plain').send("Hello from Özcan Öztürk's server");

@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Web Development Study Programme</title>
+  <link rel="icon" href="data:,">
+  <link rel="stylesheet" href="/styles.css">
+  <script src="/app.js" defer></script>
+</head>
+<body>
+  <main>
+    <header>
+      <p class="label">CMP309 · Assignment 8</p>
+      <h1>Web Development Study Programme</h1>
+      <p>This is a fictional programme for students who want to learn web development.
+        We start with HTML and CSS, practise JavaScript, and then build a small Node.js server.
+        The courses help students understand how a browser and a server work together.</p>
+      <p class="student">Özcan Öztürk · 230408011</p>
+    </header>
+
+    <section aria-labelledby="routes-title">
+      <h2 id="routes-title">Try the API</h2>
+      <p>Choose a route to see its HTTP status and response body.
+        Admin and missing routes return errors on purpose.</p>
+      <div class="buttons">
+        <button type="button" data-path="/api/courses" data-method="GET">GET /api/courses</button>
+        <button type="button" data-path="/api/status" data-method="GET">GET /api/status</button>
+        <button type="button" data-path="/api/headers" data-method="GET">GET /api/headers</button>
+        <button type="button" data-path="/api/subscribe" data-method="POST">POST /api/subscribe</button>
+        <button type="button" data-path="/api/admin" data-method="GET">GET /api/admin</button>
+        <button type="button" data-path="/api/stats" data-method="GET">GET /api/stats</button>
+        <button type="button" data-path="/api/missing" data-method="GET">GET /api/missing (404)</button>
+      </div>
+      <p class="note">Subscribe is a demonstration only. It does not save any information.</p>
+    </section>
+
+    <section aria-labelledby="response-title">
+      <h2 id="response-title">Response</h2>
+      <p id="status" role="status" aria-live="polite">No request sent yet.</p>
+      <pre id="response" tabindex="0" aria-label="Response body">The response body will appear here.</pre>
+    </section>
+
+    <footer>
+      <p>Other routes:
+        <a href="/hello">Hello</a> ·
+        <a href="/robots.txt">robots.txt</a> ·
+        <a href="/old-page">Old page redirect</a>
+      </p>
+      <p>The request counter resets when the server restarts.</p>
+    </footer>
+  </main>
+</body>
+</html>
