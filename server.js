@@ -69,6 +69,14 @@ app.get('/api/stats', (req, res) => {
   res.json({ requestsServed });
 });
 
+// Keep the fallback last so it cannot hide an existing route.
+app.use((req, res) => {
+  if (req.path.startsWith('/api')) {
+    return res.status(404).json({ error: 'Not found' });
+  }
+  res.status(404).type('text/plain').send('Page not found');
+});
+
 app.listen(port, () => {
   console.log(`Study programme server: http://localhost:${port}`);
 });
