@@ -3,6 +3,12 @@ import express from 'express';
 const app = express();
 const port = process.env.PORT || 3000;
 
+const courses = [
+  { id: 'WEB101', title: 'Web Foundations', credits: 5 },
+  { id: 'JS102', title: 'JavaScript Basics', credits: 6 },
+  { id: 'NODE201', title: 'Introduction to Back-end Development', credits: 5 }
+];
+
 // These run before static files and routes, so every request is included.
 let requestsServed = 0;
 
@@ -29,6 +35,26 @@ app.get('/robots.txt', (req, res) => {
 
 app.get('/old-page', (req, res) => {
   res.redirect(302, '/hello');
+});
+
+app.get('/api/courses', (req, res) => {
+  res.json(courses);
+});
+
+app.get('/api/status', (req, res) => {
+  res.json({
+    status: 'ok',
+    nodeVersion: process.version,
+    uptimeSeconds: process.uptime()
+  });
+});
+
+app.get('/api/headers', (req, res) => {
+  // Create a response object without changing req.headers.
+  res.json({
+    'user-agent': req.get('User-Agent') || null,
+    accept: req.get('Accept') || null
+  });
 });
 
 app.listen(port, () => {
