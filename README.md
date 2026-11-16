@@ -234,3 +234,111 @@ Keep-Alive: timeout=5
 
 Page not found
 ```
+
+The six outputs above were captured from the running server on 16 November
+2026. Date headers and process values will change on another run. The redirect
+command deliberately does not use `--location`, so its original 302 is visible.
+
+### Additional checks
+
+The project was checked with Node.js v24.22.1 and then with the current LTS,
+Node.js v26.13.1 (Lithium), using Express 5.3.0. All routes and response content
+types passed. A separate server launched from `/tmp` on port 3103 successfully
+served the page, CSS and JavaScript, confirming that neither the working folder
+nor port 3000 is hard-coded into the static file or browser URLs.
+
+Starting with a fresh process, the first `/api/stats` request returned 1.
+Requests for static files, valid routes, unmatched routes and incorrect methods
+were then counted; the next stats response matched the expected total of 17.
+The course array was unchanged after these requests.
+
+A Chromium browser check clicked all seven buttons and checked the displayed
+HTTP status and response body. Both expected HTTP errors appeared correctly.
+A simulated connection failure displayed the network error message and
+re-enabled the buttons; a later successful request worked normally. No page
+JavaScript errors were reported, and the 390px mobile layout had no horizontal
+page overflow.
+
+## Reasoning questions
+
+### 1. Route order experiment
+
+In a separate copy, the final 404 middleware was moved above the logger,
+static serving and routes. `/api/courses` returned 404 with
+`{"error":"Not found"}`, and opening `/` in Chromium displayed `Page not found`
+instead of the programme page. The fallback sent a response before Express
+could reach those later handlers. The submitted version keeps it last.
+
+### 2. Middleware experiment
+
+In another separate copy, `next()` was removed only from the logger.
+The browser navigation stayed pending and the test stopped waiting after
+2000ms; this timeout came from the test, not a response from Express.
+The server printed `2026-11-16T16:52:25.937Z GET /` but sent no response because
+control never reached the counter, static handler or routes. The working
+version calls `next()` in both middleware functions.
+
+### 3. Status codes
+
+201 indicates that a request created something, which matches the simulated
+subscription operation in this assignment. A missing page uses 404 so browsers,
+scripts and other clients can recognize that the requested resource does not
+exist. Returning 200 with an error message would incorrectly describe that
+request as successful.
+
+### 4. Configuration
+
+`process.env.PORT` lets the environment choose a port without editing the
+source file. This is useful on hosting services and when port 3000 is already
+occupied. The fallback keeps the project easy to run locally when PORT is unset.
+
+### 5. Dependencies
+
+`node_modules` contains installed dependencies, which are large and can be
+recreated from the committed package files. After cloning the repository, a
+teammate should enter the project folder, run `npm ci`, and then run `npm start`
+with an appropriate Node.js LTS version installed. `npm ci` installs the exact
+versions recorded in `package-lock.json`.
+
+### 6. Same origin
+
+Through the server, the page and API share the same scheme, host and port,
+so a relative URL such as `/api/courses` points to the correct server.
+Opening the HTML from disk gives it a `file:` URL, and that relative path no
+longer points to the HTTP API. If an absolute HTTP URL were used instead,
+browser same-origin policy and CORS rules would apply to that cross-origin
+request, with local files generally treated as opaque origins. The intended
+solution is to open the page through Express, not disable browser protections.
+
+## Self-study notes
+
+- **Process information:** The [Node.js process documentation](https://nodejs.org/api/process.html#processuptime)
+  says `process.uptime()` returns the number of seconds the current process has
+  been running, including fractions. `process.version` provides the actual Node
+  version string. These values are read when `/api/status` is requested.
+- **Plain text:** The [Express response documentation](https://expressjs.com/en/5x/api/response/#restype)
+  explains how `res.type()` sets the response Content-Type. The robots route
+  uses `res.type('text/plain').send(...)`; its body is text rather than JSON or HTML.
+- **Static paths:** The [Express static files guide](https://expressjs.com/en/5x/starter/static-files)
+  warns that relative static paths depend on the directory where Node is started.
+  `new URL('./public/', import.meta.url)` and `fileURLToPath` give the absolute
+  path relative to `server.js`, so the static directory is found from any folder.
+- **Readable JSON:** The [MDN JSON.stringify reference](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/JSON/stringify#the_space_parameter)
+  explains that the third argument controls indentation. The browser uses
+  `JSON.stringify(body, null, 2)` to make nested JSON easy to read.
+- **Fetch errors:** The [MDN Fetch guide](https://developer.mozilla.org/en-US/docs/Web/API/Fetch_API/Using_Fetch)
+  explains that HTTP errors do not reject a fetch promise. The page uses
+  `response.ok` for the success/error display and `catch` for network failures.
+
+## Challenges
+
+The middleware order needed care because static files can finish a response
+before later handlers run. Placing the logger and counter first made static
+requests count too. The fallback experiment also showed why a real route must
+be given a chance to respond before the 404 handler.
+
+Another issue was distinguishing HTTP errors from network errors in the page.
+Displaying the status and body even when `response.ok` is false keeps the 403
+and 404 demonstrations useful. The other-folder test checked the absolute
+static path instead of assuming the server would always start in the project
+folder.
