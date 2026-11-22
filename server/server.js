@@ -29,4 +29,27 @@ app.get('/api/stats', async (req, res) => {
   res.json(await store.getStats());
 });
 
+app.post('/api/books', async (req, res) => {
+  const book = await store.createBook(req.body);
+  res.location(`/api/books/${book.id}`).status(201).json(book);
+});
+
+app.put('/api/books/:id', async (req, res) => {
+  const book = await store.updateBook(parseId(req.params.id), req.body);
+  if (!book) return res.status(404).json({ error: 'Book not found' });
+  res.json(book);
+});
+
+app.patch('/api/books/:id', async (req, res) => {
+  const book = await store.updateBook(parseId(req.params.id), req.body, true);
+  if (!book) return res.status(404).json({ error: 'Book not found' });
+  res.json(book);
+});
+
+app.delete('/api/books/:id', async (req, res) => {
+  const deleted = await store.deleteBook(parseId(req.params.id));
+  if (!deleted) return res.status(404).json({ error: 'Book not found' });
+  res.status(204).end();
+});
+
 app.listen(port, () => console.log(`Reading List API: http://localhost:${port}; client: ${clientOrigin}`));
