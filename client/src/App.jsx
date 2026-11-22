@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
-import { listBooks, getStats, addBook, replaceBook } from './api/books.js';
+import { listBooks, getStats, addBook, replaceBook, patchBook, removeBook } from './api/books.js';
+import Stats from './components/Stats.jsx';
 import BookForm from './components/BookForm.jsx';
 import Filters from './components/Filters.jsx';
 import BookList from './components/BookList.jsx';
@@ -30,6 +31,27 @@ export default function App() {
     finally { setBusy(false); }
   }
 
+  async function changeBook(book, changes) {
+    setBusy(true); setActionError(''); setNotice('');
+    try {
+      await patchBook(book.id, changes);
+      setRevision((n) => n + 1); setNotice('Book updated.');
+      if (editing?.id === book.id) setEditing(null);
+    } catch (err) { setActionError(err.message); }
+    finally { setBusy(false); }
+  }
+
+  async function deleteBook(book) {
+    if (!window.confirm(`Delete "${book.title}"?`)) return;
+    setBusy(true); setActionError(''); setNotice('');
+    try {
+      await removeBook(book.id);
+      setRevision((n) => n + 1); setNotice('Book deleted.');
+      if (editing?.id === book.id) setEditing(null);
+    } catch (err) { setActionError(err.message); }
+    finally { setBusy(false); }
+  }
+
   useEffect(() => {
     const controller = new AbortController();
     setLoading(true);
@@ -47,13 +69,14 @@ export default function App() {
 
   return <main>
     <header><p>CMP309 · Assignment 9</p><h1>My Reading List</h1><p>Özcan Öztürk · 230408011</p></header>
+    <p className="note">Data resets to the seed books when the API restarts.</p>
     <Filters filters={filters} onChange={setFilters} disabled={busy} />
     {actionError && <p role="alert" className="error">{actionError}</p>}
     {notice && <p role="status" className="success">{notice}</p>}
     <BookForm key={`${editing?.id ?? 'new'}-${formKey}`} book={editing} busy={busy} onSave={saveBook} onCancel={() => setEditing(null)} />
-    {stats && <p>{stats.total} books in the whole list.</p>}
+    <Stats stats={stats} />
     {loading ? <p role="status">Loading books...</p> : error
       ? <div role="alert">{error} <button onClick={() => setRevision((n) => n + 1)}>Retry</button></div>
-      : <BookList books={books} busy={busy} onEdit={(book) => { setEditing(book); setActionError(''); setNotice(''); }} onToggle={() => {}} onRate={() => {}} onDelete={() => {}} />}
+      : <BookList books={books} busy={busy} onEdit={(book) => { setEditing(book); setActionError(''); setNotice(''); }} onToggle={(book) => changeBook(book, { read: !book.read, rating: book.read ? null : book.rating })} onRate={(book, rating) => changeBook(book, { rating })} onDelete={deleteBook} />}
   </main>;
 }
