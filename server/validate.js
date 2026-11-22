@@ -39,3 +39,27 @@ export function validateBook(body, existing = null) {
   if (!book.read && book.rating !== null) throw httpError(400, 'Only a read book can have a rating');
   return { ...book, title: book.title.trim(), author: book.author.trim() };
 }
+
+export function validateQuery(originalUrl) {
+  const params = new URL(originalUrl, 'http://localhost').searchParams;
+  const allowed = ['genre', 'read', 'q', 'sort', 'order', 'limit', 'page'];
+  for (const key of params.keys()) {
+    if (!allowed.includes(key)) throw httpError(400, `Unknown query parameter: ${key}`);
+    if (params.getAll(key).length !== 1) throw httpError(400, `Query parameter ${key} must not be repeated`);
+  }
+  const query = Object.fromEntries(params);
+  if (query.genre !== undefined && !genres.includes(query.genre)) throw httpError(400, 'Invalid genre filter');
+  if (query.read !== undefined && !['true', 'false'].includes(query.read)) throw httpError(400, 'read filter must be true or false');
+  if (query.sort !== undefined && !['title', 'author', 'year', 'rating'].includes(query.sort)) throw httpError(400, 'Invalid sort field');
+  if (query.order !== undefined && !['asc', 'desc'].includes(query.order)) throw httpError(400, 'order must be asc or desc');
+  for (const field of ['limit', 'page']) {
+    if (query[field] !== undefined && (!/^\d+$/.test(query[field]) || !Number.isSafeInteger(Number(query[field])) || Number(query[field]) < 1)) {
+      throw httpError(400, `${field} must be a positive integer`);
+    }
+  }
+  const limit = Number(query.limit ?? 50);
+  const page = Number(query.page ?? 1);
+  if (limit > 50) throw httpError(400, 'limit must be between 1 and 50');
+  if (!Number.isSafeInteger((page - 1) * limit)) throw httpError(400, 'page is too large');
+  return { ...query, limit, page, sort: query.sort ?? 'id', order: query.order ?? 'asc' };
+}
