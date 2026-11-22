@@ -52,4 +52,23 @@ app.delete('/api/books/:id', async (req, res) => {
   res.status(204).end();
 });
 
+// Deliberate async failure for the lab's error-handling experiment (documented in README).
+app.get('/api/crash', async (req, res) => {
+  await Promise.resolve();
+  throw new Error('Deliberate lab error');
+});
+
+app.use((req, res) => res.status(404).json({ error: 'Not found' }));
+
+app.use((err, req, res, next) => {
+  console.error(err);
+  if (res.headersSent) return next(err);
+  if (err.type === 'entity.parse.failed') {
+    return res.status(400).json({ error: 'Malformed JSON body' });
+  }
+  if (err.status === 413) return res.status(413).json({ error: 'JSON body is too large' });
+  if ([400, 409].includes(err.status)) return res.status(err.status).json({ error: err.message });
+  res.status(500).json({ error: 'Something went wrong' });
+});
+
 app.listen(port, () => console.log(`Reading List API: http://localhost:${port}; client: ${clientOrigin}`));
