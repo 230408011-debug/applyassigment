@@ -56,3 +56,38 @@ export async function getStats() {
     byGenre
   };
 }
+
+function checkDuplicate(book, exceptId = null) {
+  if (books.some((item) => item.id !== exceptId && item.title.toLowerCase() === book.title.toLowerCase() && item.author.toLowerCase() === book.author.toLowerCase())) {
+    throw httpError(409, 'A book with this title and author already exists');
+  }
+}
+
+export async function createBook(body) {
+  await delay();
+  const book = validateBook(body);
+  // No await between duplicate checking and storing, so concurrent writes cannot bypass this check.
+  checkDuplicate(book);
+  const created = { ...book, id: nextId };
+  nextId += 1;
+  books = [...books, created];
+  return { ...created };
+}
+
+export async function updateBook(id, body, partial = false) {
+  await delay();
+  const existing = books.find((book) => book.id === id);
+  if (!existing) return null;
+  const valid = validateBook(body, partial ? existing : null);
+  checkDuplicate(valid, id);
+  const updated = { ...valid, id };
+  books = books.map((book) => book.id === id ? updated : book);
+  return { ...updated };
+}
+
+export async function deleteBook(id) {
+  await delay();
+  if (!books.some((book) => book.id === id)) return false;
+  books = books.filter((book) => book.id !== id);
+  return true;
+}
