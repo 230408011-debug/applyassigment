@@ -1,4 +1,4 @@
-export const genres = ['fiction', 'non-fiction', 'science', 'history', 'fantasy', 'other'];
+import { genres } from '../genres.js';
 
 export default function Filters({ filters, onChange, disabled }) {
   function change(event) {

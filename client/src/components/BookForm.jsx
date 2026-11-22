@@ -1,5 +1,7 @@
 import { useState } from 'react';
-import { genres } from './Filters.jsx';
+import { genres } from '../genres.js';
+
+const currentYear = new Date().getFullYear();
 
 export default function BookForm({ book, busy, onSave, onCancel }) {
   const [values, setValues] = useState(book || { title: '', author: '', year: '', genre: 'fiction', read: false, rating: null });
@@ -18,7 +20,7 @@ export default function BookForm({ book, busy, onSave, onCancel }) {
     <form onSubmit={submit}><fieldset disabled={busy}>
       <label>Title<input name="title" value={values.title} maxLength={100} required onChange={change} /></label>
       <label>Author<input name="author" value={values.author} maxLength={100} required onChange={change} /></label>
-      <label>Year<input name="year" type="number" min={1000} max={new Date().getFullYear()} step={1} value={values.year} required onChange={change} /></label>
+      <label>Year<input name="year" type="number" min={1000} max={currentYear} step={1} value={values.year} required onChange={change} /></label>
       <label>Book genre<select name="genre" value={values.genre} onChange={change}>{genres.map((g) => <option key={g}>{g}</option>)}</select></label>
       <label className="checkbox"><input name="read" type="checkbox" checked={values.read} onChange={change} />Already read</label>
       <label>Book rating<select name="rating" value={values.rating ?? ''} disabled={!values.read} onChange={change}>

@@ -20,13 +20,25 @@ export default function App() {
   const [notice, setNotice] = useState('');
   const [formKey, setFormKey] = useState(0);
 
+  function refresh() {
+    setLoading(true);
+    setError('');
+    setRevision((n) => n + 1);
+  }
+
+  function changeFilters(values) {
+    setLoading(true);
+    setError('');
+    setFilters(values);
+  }
+
   async function saveBook(values) {
     setBusy(true); setActionError(''); setNotice('');
     try {
       if (editing) await replaceBook(editing.id, values);
       else await addBook(values);
       setEditing(null); setFormKey((n) => n + 1);
-      setRevision((n) => n + 1); setNotice('Book saved.');
+      refresh(); setNotice('Book saved.');
     } catch (err) { setActionError(err.message); }
     finally { setBusy(false); }
   }
@@ -35,7 +47,7 @@ export default function App() {
     setBusy(true); setActionError(''); setNotice('');
     try {
       await patchBook(book.id, changes);
-      setRevision((n) => n + 1); setNotice('Book updated.');
+      refresh(); setNotice('Book updated.');
       if (editing?.id === book.id) setEditing(null);
     } catch (err) { setActionError(err.message); }
     finally { setBusy(false); }
@@ -46,7 +58,7 @@ export default function App() {
     setBusy(true); setActionError(''); setNotice('');
     try {
       await removeBook(book.id);
-      setRevision((n) => n + 1); setNotice('Book deleted.');
+      refresh(); setNotice('Book deleted.');
       if (editing?.id === book.id) setEditing(null);
     } catch (err) { setActionError(err.message); }
     finally { setBusy(false); }
@@ -54,8 +66,6 @@ export default function App() {
 
   useEffect(() => {
     const controller = new AbortController();
-    setLoading(true);
-    setError('');
     Promise.all([listBooks(filters, controller.signal), getStats(controller.signal)])
       .then(([newBooks, newStats]) => {
         if (!controller.signal.aborted) { setBooks(newBooks); setStats(newStats); }
@@ -70,13 +80,13 @@ export default function App() {
   return <main>
     <header><p>CMP309 · Assignment 9</p><h1>My Reading List</h1><p>Özcan Öztürk · 230408011</p></header>
     <p className="note">Data resets to the seed books when the API restarts.</p>
-    <Filters filters={filters} onChange={setFilters} disabled={busy} />
+    <Filters filters={filters} onChange={changeFilters} disabled={busy} />
     {actionError && <p role="alert" className="error">{actionError}</p>}
     {notice && <p role="status" className="success">{notice}</p>}
     <BookForm key={`${editing?.id ?? 'new'}-${formKey}`} book={editing} busy={busy} onSave={saveBook} onCancel={() => setEditing(null)} />
     <Stats stats={stats} />
     {loading ? <p role="status">Loading books...</p> : error
-      ? <div role="alert">{error} <button onClick={() => setRevision((n) => n + 1)}>Retry</button></div>
+      ? <div role="alert">{error} <button onClick={refresh}>Retry</button></div>
       : <BookList books={books} busy={busy} onEdit={(book) => { setEditing(book); setActionError(''); setNotice(''); }} onToggle={(book) => changeBook(book, { read: !book.read, rating: book.read ? null : book.rating })} onRate={(book, rating) => changeBook(book, { rating })} onDelete={deleteBook} />}
   </main>;
 }
