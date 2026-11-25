@@ -1,0 +1,63 @@
+CMP307 REQUIREMENT REVIEW — 25 November 2026
+Sources: project_file_en.pdf (identical to the Moodle attachment), introductory
+lecture project rules and Project assignment 528689. Statuses describe actual
+verification, not promises or a predicted grade.
+
+PDF TECHNICAL REQUIREMENTS
+[PASS] Database-backed classification scenario: PostgreSQL, public UCI HTRU2,
+       dataset attribution, license, original bytes and SHA-256 supplied.
+[PASS] Table/field types, PK/FK and constraints: sql/01_schema.sql; report section 3.
+[PASS] Direct database retrieval for ML: pulsar/ml.py FEATURE_SQL; no CSV read
+       in training. CSV is an ingestion source only; SQL seed is bundled.
+[PASS] Preprocessing: finite/count/label checks and stratified split; scaler in
+       train-only CV pipeline. Missing-value and duplicate checks documented.
+[PASS] Algorithms and train/test: Dummy, Logistic Regression, Random Forest;
+       identical seed-42 split, train 14318 / test 3580, 3-fold training CV.
+[PASS] Model outputs written back: run_samples, predictions, run_metrics;
+       saved data redisplayed by SQL JOIN API and web review panel.
+[PASS] Measured accuracy/precision/recall/F1, ROC-AUC and AP with confusion
+       counts: report section 5; docs/evidence_snapshot.json; tests recompute.
+[PASS] Data structure effect on processing time: typed vs JSON transport and
+       indexed ranking benchmark, seven repetitions; report section 6.
+       Scope explicitly limited; no false claim of physical storage comparison.
+
+PDF REPORT SECTIONS
+[PASS] Cover with course, title, full name and ID; abstract less than one page.
+[PASS] Problem, theory, database choice and technical question: section 1.
+[PASS] Architecture, protocols, component diagram and single-machine scope: 2.
+[PASS] Relational schema/types/relationships/indexes/normalization rationale: 3.
+[PASS] Reproducible setup, versions, Docker/local commands/configuration: 7,
+       README, .env.example; secrets excluded.
+[PASS] Findings, weaknesses, real-world/scaling assessment: sections 5,6,7,8.
+[PASS] IEEE academic/official references with inline citations: final page.
+[PENDING] Medium publication: adapted article exists with supplied figure links;
+          no actual Medium publication URL has been verified.
+
+ADDITIONAL LECTURE / DELIVERY REQUIREMENTS
+[PASS] Individual project with frontend + backend.
+[PASS] Postman requests and OpenAPI document: docs/*.json and openapi.yaml.
+[PASS] Dockerized complete app: Dockerfile + compose.yaml, both services healthy,
+       real training executed in app container and persistence checked on restart.
+[PASS] Editable end-to-end architecture/workflow and ER/schema files: docs/*.mmd,
+       plus PNG/SVG exports; source repository includes SQL and Dockerfile.
+[PASS] GitHub branch database-pulsar pushed and remote commit verified.
+[PASS] Working application recording available: docs/demo.mp4.
+[PENDING] YouTube publication: an actual YouTube URL is not available yet.
+[PASS] Medium draft contains Docker startup section; publication remains pending.
+[IN PROGRESS] BirDeHa project field: reviewed as correct course CMP307 / Project,
+              id 528689; file limit 512 MB each and at most 20 files.
+[PENDING] Report + GitHub/demo/Medium/diagram files via instructor email.
+          Draft exists; no message sent and no substitute links fabricated.
+[PENDING] Live class review during the week before final exam. Exact date must
+          be confirmed with the instructor; attendance cannot be replaced by files.
+
+LATEST RECHECK
+Five integration tests passed, including SQL rollback, FK/dataset checks,
+metric/count consistency and API validation. Rechecked seed 4294967295 boundary:
+API accepts uint32; database seed field now BIGINT to store it without overflow.
+Browser check covers ranking, FP/FN, pagination, measurements, errors, mobile.
+The selected RF has holdout F1 0.88923, TP 289, FN 39, FP 33, TN 3219.
+
+DEADLINE: Moodle displays 24 December 2026 00:00 Istanbul. Complete before
+23 December ends; recheck for any instructor change. Final-grade weighting
+cannot be inferred solely from the project file; verify the instructor's policy.

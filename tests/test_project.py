@@ -28,7 +28,7 @@ def test_import_and_data_quality():
         assert data['source_row']==1
         assert data['feature_1']==140.5625
 
-def test_api_reads_and_validation(client):
+def test_api_reads_and_validation(client, monkeypatch):
     assert client.get('/api/health').json['status']=='ok'
     assert client.get('/api/overview').json['total']==17898
     assert client.post('/api/import',json={}).json['total']==17898
@@ -40,6 +40,9 @@ def test_api_reads_and_validation(client):
     assert client.get('/api/runs/'+str(uuid.uuid4())+'/predictions').status_code==404
     assert client.get('/api/candidates/999999999').status_code==404
     assert client.get('/api/not-a-route').status_code==404
+    monkeypatch.setattr('pulsar.web.train_all', lambda seed: {'seed': seed})
+    assert client.post('/api/train',json={'seed':4294967295}).json['seed']==4294967295
+    assert client.post('/api/train',json={'seed':4294967296}).status_code==400
 
 def test_completed_runs_have_consistent_metrics_and_disjoint_splits(client):
     rows=client.get('/api/runs').json['items']
@@ -83,7 +86,7 @@ def test_fk_guard_prevents_training_predictions_and_atomic_rollback():
                 dataset=c.execute('SELECT id FROM dataset_versions LIMIT 1').fetchone()['id']
                 ids=[r['id'] for r in c.execute('SELECT id FROM candidates ORDER BY id LIMIT 2').fetchall()]
                 run=str(uuid.uuid4())
-                c.execute("INSERT INTO model_runs(id,batch_id,dataset_id,algorithm,seed,threshold,cv_f1,status,parameters,train_count,test_count,feature_query_ms) VALUES (%s,%s,%s,'Dummy',42,.5,0,'running','{}',1,1,0)",(run,str(uuid.uuid4()),dataset))
+                c.execute("INSERT INTO model_runs(id,batch_id,dataset_id,algorithm,seed,threshold,cv_f1,status,parameters,train_count,test_count,feature_query_ms) VALUES (%s,%s,%s,'Dummy',4294967295,.5,0,'running','{}',1,1,0)",(run,str(uuid.uuid4()),dataset))
                 with pytest.raises(RuntimeError,match='Test rollback'):
                     save_results(c,run,np.array(ids),[0],[1],[.5],[1],{},0,None,fail=True)
                 assert c.execute('SELECT count(*) AS n FROM predictions WHERE run_id=%s',(run,)).fetchone()['n']==0

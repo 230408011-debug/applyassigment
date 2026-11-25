@@ -27,7 +27,7 @@ CREATE TABLE IF NOT EXISTS model_runs (
   batch_id UUID NOT NULL,
   dataset_id BIGINT NOT NULL REFERENCES dataset_versions(id),
   algorithm TEXT NOT NULL CHECK (algorithm IN ('Dummy','LogisticRegression','RandomForest')),
-  seed INTEGER NOT NULL,
+  seed BIGINT NOT NULL,
   threshold DOUBLE PRECISION NOT NULL CHECK (threshold BETWEEN 0 AND 1),
   cv_f1 DOUBLE PRECISION NOT NULL CHECK (cv_f1 BETWEEN 0 AND 1),
   selected BOOLEAN NOT NULL DEFAULT false,
@@ -104,3 +104,6 @@ DO $$ BEGIN
     );
   END IF;
 END $$;
+
+-- NumPy/scikit-learn seeds cover the full unsigned 32-bit range.
+ALTER TABLE model_runs ALTER COLUMN seed TYPE BIGINT;

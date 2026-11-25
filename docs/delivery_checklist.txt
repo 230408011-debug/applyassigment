@@ -5,7 +5,7 @@ PREPARED AND VERIFIED
 - Original licensed HTRU2 dataset and idempotent SQL import.
 - Direct database training queries, train-only preprocessing and CV selection.
 - Predictions, split membership, metrics and model hashes persisted in SQL.
-- Five integration checks passed; real Docker training and browser UI checked.
+- Five integration checks passed, including full uint32 seed storage; real Docker training and browser UI checked.
 - Technical report PDF and editable LaTeX source.
 - Editable architecture/ER/schema diagrams, PNG and SVG exports.
 - OpenAPI and Postman request collection.

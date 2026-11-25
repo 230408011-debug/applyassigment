@@ -58,7 +58,7 @@ The filesystem model artifact and SQL transaction are separate storage mechanism
 \textbf{Table} & \textbf{Main fields, types and decisions}\\\midrule
  dataset\_versions & BIGINT identity PK; name/source\_url/license TEXT; sha256 CHAR(64) UNIQUE; expected\_rows INTEGER; imported\_at TIMESTAMPTZ.\\
  candidates & BIGINT identity PK and dataset FK; source\_row INTEGER; feature\_1 through feature\_8 DOUBLE PRECISION; true\_label SMALLINT constrained to 0/1.\\
- model\_runs & UUID PK and batch UUID; dataset FK; algorithm/status TEXT; seed and split counts INTEGER; threshold/CV F1/timings DOUBLE PRECISION; selected BOOLEAN; parameters JSONB; model SHA and timestamps.\\
+ model\_runs & UUID PK and batch UUID; dataset FK; algorithm/status TEXT; seed BIGINT; split counts INTEGER; threshold/CV F1/timings DOUBLE PRECISION; selected BOOLEAN; parameters JSONB; model SHA and timestamps.\\
  run\_samples & Composite PK (run\_id UUID, candidate\_id BIGINT); subset TEXT constrained to train/test; both IDs are FKs.\\
  run\_metrics & Run UUID is PK/FK; accuracy, precision, recall, F1, ROC-AUC and AP are DOUBLE PRECISION in [0,1]; TN/FP/FN/TP are nonnegative INTEGERs.\\
  predictions & Composite PK (run\_id,candidate\_id); test-only subset; DOUBLE PRECISION score in [0,1]; SMALLINT predicted class 0/1; created\_at TIMESTAMPTZ.\\\bottomrule

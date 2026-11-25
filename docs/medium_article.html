@@ -13,7 +13,7 @@ docker compose ps</pre>
 <h2>Designing the tables</h2>
 <p>The schema separates dataset versions, candidate measurements, model runs, split membership, metrics and predictions. A source record is not copied into a new dataset for every model. The run_samples table represents the many-to-many relationship between runs and candidates. Composite foreign keys allow prediction rows only for test members, while a trigger checks dataset agreement.</p>
 <p>The core design follows the course's relational modelling and normalization principles. The metric table is a deliberate derived audit snapshot. Tests recalculate its confusion counts from predictions instead of assuming that duplicated derived values can never disagree.</p>
-<p><strong>Insert docs/architecture.png and docs/schema.png here when publishing.</strong> Editable Mermaid sources accompany both figures.</p>
+<figure><img src="https://raw.githubusercontent.com/230408011-debug/applyassigment/database-pulsar/docs/architecture.png" alt="Single-machine browser, Flask, PostgreSQL and ML workflow" style="max-width:100%"><figcaption>Application architecture. Editable Mermaid source is included in GitHub.</figcaption></figure><figure><img src="https://raw.githubusercontent.com/230408011-debug/applyassigment/database-pulsar/docs/schema.png" alt="Relational schema and key relationships" style="max-width:100%"><figcaption>Selected attributes and relationships; complete DDL is supplied.</figcaption></figure>
 <h2>The two-way data flow</h2>
 <p>The original CSV is used once to generate reproducible INSERT statements. After import, the model reads directly from PostgreSQL:</p>
 <pre>SELECT id, feature_1, feature_2, feature_3, feature_4,
@@ -25,7 +25,7 @@ FROM candidates WHERE dataset_id = %s ORDER BY id;</pre>
 <h2>What the measurements showed</h2>
 <p>The cross-validation choice was Random Forest. Its held-out F1 was 0.8892, precision 0.8975 and recall 0.8811. It found 289 positive examples, missed 39 and produced 33 false alarms. Logistic Regression had higher recall, so Random Forest is not better by every criterion.</p>
 <p>The majority baseline had accuracy 0.9084 but zero positive recall and F1. That is a useful reminder that class imbalance can make accuracy look reassuring while the actual task is not being solved. The interface shows both metrics and false-negative examples.</p>
-<p><strong>Insert docs/results.png here.</strong> The figure was generated from results read back from SQL.</p>
+<figure><img src="https://raw.githubusercontent.com/230408011-debug/applyassigment/database-pulsar/docs/results.png" alt="Model F1 comparison and Random Forest confusion matrix" style="max-width:100%"><figcaption>Measured held-out results read back from PostgreSQL.</figcaption></figure>
 <h2>A small database performance experiment</h2>
 <p>I measured eight-column numeric transport against building a JSONB feature array from the same rows. After warm-up, the seven-run medians were 59.822 ms and 224.567 ms respectively. This includes SQL serialization and client decoding; it is not a comparison of independently stored relational and JSON tables.</p>
 <p>A run-specific ranking query was also measured with EXPLAIN ANALYZE. Its median server execution time was 0.027 ms with the composite score index and 1.086 ms without it, at the recorded data size. These are warm-cache measurements on one machine and should not be generalized to every workload. Raw repetitions and plans are included in the evidence snapshot.</p>
