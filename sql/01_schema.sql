@@ -90,3 +90,17 @@ SELECT p.run_id,p.candidate_id,c.source_row,c.true_label,p.predicted_label,p.pro
             WHEN c.true_label=0 AND p.predicted_label=1 THEN 'FP'
             WHEN c.true_label=1 AND p.predicted_label=0 THEN 'FN' ELSE 'TN' END AS outcome
 FROM predictions p JOIN candidates c ON c.id=p.candidate_id;
+DO $$ BEGIN
+  IF NOT EXISTS (SELECT 1 FROM pg_constraint WHERE conname='candidate_finite_features') THEN
+    ALTER TABLE candidates ADD CONSTRAINT candidate_finite_features CHECK (
+      feature_1 > '-Infinity'::float8 AND feature_1 < 'Infinity'::float8 AND
+      feature_2 >= 0 AND feature_2 < 'Infinity'::float8 AND
+      feature_3 > '-Infinity'::float8 AND feature_3 < 'Infinity'::float8 AND
+      feature_4 > '-Infinity'::float8 AND feature_4 < 'Infinity'::float8 AND
+      feature_5 > '-Infinity'::float8 AND feature_5 < 'Infinity'::float8 AND
+      feature_6 >= 0 AND feature_6 < 'Infinity'::float8 AND
+      feature_7 > '-Infinity'::float8 AND feature_7 < 'Infinity'::float8 AND
+      feature_8 > '-Infinity'::float8 AND feature_8 < 'Infinity'::float8
+    );
+  END IF;
+END $$;
