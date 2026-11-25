@@ -17,5 +17,6 @@ https://github.com/230408011-debug/applyassigment/tree/database-pulsar/docs
 
 Medium article (publication link supplied by the author):
 https://medium.com/@ozturkozcan838/pulsar-scout-a-database-to-model-to-database-project-4994def1e9fc
-Project email sent on 25 November 2026 with report PDF and source ZIP.
+Original ZIP email rejected by Gmail. Replacement sent with PDF attachment
+and links to source and editable diagrams; recipient delivery unconfirmed.
 In-class review remains to be attended.
