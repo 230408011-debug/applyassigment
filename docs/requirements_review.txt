@@ -49,8 +49,10 @@ ADDITIONAL LECTURE / DELIVERY REQUIREMENTS
 [PASS] BirDeHa Project id 528689: report, ZIP, demo and links file uploaded.
        Portal status: submitted for grading; editing remains available.
        Saved downloads verified against local SHA-256. YouTube/Medium links included.
-[PENDING] Report + GitHub/demo/Medium/diagram files via instructor email.
-          Draft exists; no message sent and no substitute links fabricated.
+[PASS] Project email sent on 25 November 2026 to the course instructor verified
+       from the BirDeHa teacher profile. Gmail SENT record confirms report PDF,
+       source ZIP (including editable diagrams) and GitHub/YouTube/Medium URLs.
+       Instructor reading/receipt is not claimed.
 [PENDING] Live class review during the week before final exam. Exact date must
           be confirmed with the instructor; attendance cannot be replaced by files.
 

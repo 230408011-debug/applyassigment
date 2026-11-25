@@ -18,7 +18,8 @@ STILL REQUIRED FOR FINAL DELIVERY
 - YouTube demo uploaded as unlisted on Software CN: https://www.youtube.com/watch?v=wj3nfrJxYe8
   Prepare to explain the application yourself during the live review.
 - Actual Medium and YouTube URLs are included in the email draft and submission.
-- Confirm the instructor email address and send only after reviewing the contents.
+- Project email sent on 25 November 2026; Gmail SENT record and both attachments
+  verified. This confirms sending, not that the instructor has read it.
 - BirDeHa Project id 528689 now contains report, ZIP, demo and links file;
   status is submitted for grading and editing remains available. Both publication
   URLs are included in the links file and package.
@@ -33,4 +34,4 @@ HONEST SCOPE
 This is benchmark classification, not discovery of an unknown pulsar. On the fixed
 holdout, selected Random Forest has F1=0.88923, with 33 FP and 39 FN. No external
 observing-campaign validation is available. YouTube upload is verified. The author supplied the Medium publication URL; an
-automated fetch returned HTTP 403. Instructor email remains pending.
+automated fetch returned HTTP 403. Project email sending and both attachments are verified; live class review remains.
