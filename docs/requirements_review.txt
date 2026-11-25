@@ -42,7 +42,7 @@ ADDITIONAL LECTURE / DELIVERY REQUIREMENTS
        plus PNG/SVG exports; source repository includes SQL and Dockerfile.
 [PASS] GitHub branch database-pulsar pushed and remote commit verified.
 [PASS] Working application recording available: docs/demo.mp4.
-[PENDING] YouTube publication: an actual YouTube URL is not available yet.
+[PASS] YouTube demo uploaded as unlisted on Software CN: https://www.youtube.com/watch?v=wj3nfrJxYe8
 [PASS] Medium draft contains Docker startup section; publication remains pending.
 [PASS] BirDeHa Project id 528689: report, ZIP, demo and links file uploaded.
        Portal status: submitted for grading; editing remains available.

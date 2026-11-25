@@ -1,0 +1,19 @@
+Pulsar Scout — Özcan Öztürk — 230408011 — CMP307
+
+Source and Docker startup:
+https://github.com/230408011-debug/applyassigment/tree/database-pulsar
+
+YouTube working demo (unlisted, Software CN):
+https://www.youtube.com/watch?v=wj3nfrJxYe8
+
+Technical report:
+https://github.com/230408011-debug/applyassigment/blob/database-pulsar/docs/report.pdf
+
+Downloadable demo MP4 (also attached):
+https://github.com/230408011-debug/applyassigment/blob/database-pulsar/docs/demo.mp4
+
+Editable architecture and relational/conceptual diagrams:
+https://github.com/230408011-debug/applyassigment/tree/database-pulsar/docs
+
+Medium publication: pending. The adapted article and figures are in the package.
+Instructor email and in-class review have not been completed.

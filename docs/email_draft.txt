@@ -1,5 +1,5 @@
 DRAFT ONLY — NOT SENT
-Replace both marked URL placeholders before sending; confirm recipient separately.
+Replace the Medium URL placeholder before sending; confirm recipient separately.
 
 Subject: CMP307 Final Project — Pulsar Scout — 230408011
 
@@ -12,7 +12,7 @@ and predictions back to the database for review in a Flask application.
 Code and setup instructions:
 https://github.com/230408011-debug/applyassigment/tree/database-pulsar
 
-Demo video: [REQUIRED: actual published YouTube URL]
+Demo video: https://www.youtube.com/watch?v=wj3nfrJxYe8
 Medium article: [REQUIRED: actual published Medium URL]
 
 Attached: technical report and source package including Dockerfile, SQL schema,

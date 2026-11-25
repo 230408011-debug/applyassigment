@@ -8,6 +8,8 @@ and the predictions and metrics are written back to PostgreSQL. Flask serves
 a review screen that queries the saved results. This is a public benchmark
 exercise, not proof of discovering a new pulsar.
 
+Working demo on YouTube (unlisted): https://www.youtube.com/watch?v=wj3nfrJxYe8
+
 ## Download and deliverables
 
 ```sh
