@@ -6,3 +6,6 @@ __pycache__/
 artifacts/*
 !artifacts/.gitkeep
 *.joblib
+docs/*.aux
+docs/*.log
+docs/*.out

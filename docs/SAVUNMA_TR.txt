@@ -1,0 +1,152 @@
+PULSAR SCOUT — PROJEYİ ANLATMA VE CANLI GÖSTERİM NOTLARI
+Özcan Öztürk / 230408011 / CMP307
+
+KISA ANLATIM
+Bu projede, pulsar adayı ölçümlerini PostgreSQL'de saklıyorum. Python,
+veriyi doğrudan SQL sorgusuyla çekiyor; üç modeli karşılaştırıyor.
+Tahminler ve metrikler tekrar veri tabanına yazılıyor. Web arayüzü de
+kaydedilmiş sonuçları sorguluyor. Yani veri tabanı yalnızca bir CSV
+klasörünün yerine konmuş değil; hem veri kaynağı hem sonuç deposu.
+
+Pulsar: Düzenli radyo sinyalleri gözlemlenebilen bir nötron yıldızı türü.
+Buradaki görev yeni yıldız keşfetmek değil, etiketli adayları sınıflandırmak.
+Ham teleskop görüntüleri veya gökyüzü koordinatları kullanılmıyor.
+
+5–7 DAKİKALIK ÖNERİLEN SUNUM AKIŞI
+0:00–0:40 Problem, veri kaynağı, 17.898 kayıt ve sınıf dengesizliği.
+0:40–1:30 Mimari: tarayıcı, Flask, PostgreSQL, Python model modülü.
+1:30–2:20 ER diyagramı ve tablolar: dataset_versions, candidates,
+          model_runs, run_samples, run_metrics, predictions.
+2:20–3:00 Dockerfile ve compose.yaml. docker compose ps ile iki servisi göster.
+3:00–4:10 Veriyi yükle; tekrar yüklemenin kayıt sayısını değiştirmediğini göster.
+          Train düğmesiyle SQL -> model -> SQL akışını göster.
+4:10–5:20 Model tablosu, baseline, F1/recall ve hata örneklerini açıkla.
+          FN filtresini seç; gerçek pulsar olup kaçırılan bir kaydı incele.
+5:20–6:10 SQL kaydını ve transaction testini göster. Kaynakça ve sınırlar.
+6:10–7:00 Sorular veya daha yavaş bir canlı gösterim için süre payı.
+Bu süre bir öneridir; hocanın açıkladığı sunum süresi önceliklidir.
+
+ÇALIŞTIRMA
+1. Docker Desktop açık olmalı.
+2. .env.example dosyasını .env olarak kopyala, yerel şifre belirle.
+3. docker compose up --build -d
+4. docker compose ps
+5. Tarayıcı: http://localhost:5055
+6. Import dataset, ardından Train & save results.
+Yerel ortamda port doluysa .env içindeki APP_PORT/DB_PORT değiştirilebilir.
+.env dosyasını, şifreyi veya bağlantı dizesini videoda gösterme.
+
+GÖSTERİLECEK SQL KOMUTLARI
+Docker üzerinden bağlan:
+  docker compose exec db psql -U pulsar -d pulsar
+
+Kayıt ve sınıf sayıları:
+  SELECT true_label,COUNT(*) FROM candidates GROUP BY true_label;
+Beklenen: 0 -> 16259; 1 -> 1639.
+
+Kaydedilen deneyler:
+  SELECT algorithm,seed,selected,status FROM model_runs ORDER BY created_at;
+
+Metrikler:
+  SELECT r.algorithm,m.precision_score,m.recall,m.f1
+  FROM model_runs r JOIN run_metrics m ON m.run_id=r.id
+  ORDER BY r.created_at;
+
+Tahmin sayıları:
+  SELECT run_id,COUNT(*) FROM predictions GROUP BY run_id;
+Her tamamlanmış model çalıştırması için 3580. Her eğitim düğmesi 3 model
+oluşturur; tekrar çalıştırırsan geçmiş büyür. Toplam tahmin sayısının hep
+10740 kalmasını bekleme.
+
+Kaynağa geri bağlanan tahminler:
+  SELECT * FROM prediction_review LIMIT 5;
+
+MUHTEMEL SORULAR VE KISA CEVAPLAR
+1) Neden PostgreSQL?
+   İlişkiler, sayısal veri tipleri, FK, transaction, indeks ve SQL sorguları
+   bu problem için uygun. Kurulum Docker ile tekrar edilebiliyor.
+
+2) CSV kullanmak yasaktı; projede neden CSV var?
+   CSV yalnızca ilk içe aktarma kaynağı. Hocanın izin verdiği veri yükleme
+   aşaması bu. Model ml.py içinde SELECT sorgusuyla PostgreSQL'den okuyor;
+   eğitim sırasında CSV'yi yeniden açmıyor veya elle dışa aktarmıyor.
+
+3) Neden altı tablo?
+   Kaynak sürümünü, ölçümleri, model çalıştırmasını, eğitim/test üyeliğini,
+   metrikleri ve tahminleri ayrı anlamlara sahip oldukları için ayırdım.
+   Aynı kaynağı her model için yeniden kopyalamıyorum.
+
+4) N:M ilişki nerede?
+   Bir aday birden çok model çalıştırmasına katılabilir; bir çalıştırmada
+   çok sayıda aday olur. run_samples ara tablosu bunu çözüyor.
+
+5) Eğitim verisine neden tahmin kaydı yazılmıyor?
+   predictions.subset yalnızca 'test' olabilir. Üç sütunlu FK bu kaydı
+   run_samples'taki test üyeliğine bağlar. Eğitim verisi başarı ölçümünü
+   olduğundan iyi göstermemeli.
+
+6) Data leakage nedir, nasıl önlendi?
+   Test verisinin eğitim veya model seçimine sızmasıdır. Veri önce ayrılır.
+   Ölçekleyici Pipeline içinde yalnızca eğitim katlarında öğrenilir.
+   Model CV ile eğitim verisinden seçilir; test skoruyla seçilmez.
+
+7) Sınıfların dengesiz olması neden önemli?
+   Çoğu kayıt noise. Her kayda noise diyen model yaklaşık %90,84 accuracy
+   alır ama hiçbir pulsarı bulamaz. Bu yüzden pozitif sınıf F1 ve recall
+   ile hata sayıları birlikte gösteriliyor.
+
+8) Sonuçların ne?
+   Seed 42 ile seçilen Random Forest: F1 0,8892, precision 0,8975,
+   recall 0,8811. 328 gerçek pozitif test kaydının 289'u bulundu,
+   39'u kaçırıldı. 33 false positive var. Logistic Regression'ın recall'u
+   daha yüksek, bu yüzden her metrikte RF daha iyi demiyorum.
+
+9) Modeli nasıl seçtin?
+   Eğitim verisinde 3 katlı stratified CV. Önceden belirlenmiş ölçüt
+   pozitif sınıf F1. En yüksek ortalamayı RF aldı. Eşik sabit 0,5.
+
+10) Normalizasyon nasıl uygulandı?
+    Kaynak bilgisi ayrı, her aday tek satır ve özellikler tek değerli.
+    Ara tablonun anahtarı run_id + candidate_id. Metrikler ve split
+    sayıları, denetim için bilinçli olarak saklanan türetilmiş özetler;
+    bunları tamamen tekrar içermeyen ham veri gibi savunma.
+
+11) FK yeterli değil miydi, trigger neden var?
+    Ayrı FK'ler adayın ve çalıştırmanın var olduğunu söyler ama aynı veri
+    setine ait olduklarını garanti etmez. Trigger bu çapraz kontrolü yapar.
+
+12) Transaction nerede gerekli?
+    Üyelikler, tahminler, metrikler ve tamamlandı durumu birlikte kaydedilir.
+    Yazmanın ortasında hata olursa yarım sonuç kalmaz. Test bunu doğrular.
+    Dosyadaki .joblib ile SQL arasında dağıtık transaction iddiası yoktur.
+
+13) İndeks ne işe yarıyor?
+    Belirli run_id için score'a göre en üst 20 adayı bulmayı destekler.
+    Gerçek EXPLAIN ANALYZE ölçümü raporda; tüm sorgular her zaman
+    hızlanır veya aynı süreyi herkesin bilgisayarı verir demiyorum.
+
+14) Sunucu kapanınca ne olur?
+    PostgreSQL ve model dosyaları volume'da kalır. docker compose down
+    veriyi korur. down -v ile volume silmek farklı ve yıkıcı bir işlemdir.
+
+15) Sistem gerçekten yeni pulsar buldu mu?
+    Hayır. HTRU2 etiketli örnekler üzerinde bir benchmark ve aday tarama
+    prototipi. Yeni gözlemlerde ayrıca bilimsel doğrulama gerekir.
+
+16) Verilerdeki özellik adları neden feature_1...8?
+    Kaynağın ARFF başlığı ve README'si bazı skewness/kurtosis sıralamalarını
+    farklı adlandırıyor. Sayısal sütun sırasını korudum, sessizce değiştirmedim.
+    Bu belirsizlikten fiziksel özellik önem sıralaması üretmedim.
+
+17) Demo videosunda ses var mı?
+    Hazırlanan çalışma videosu gerçek uygulama kaydı ve ekran üstü açıklamalı.
+    Sesli anlatım yok. Kendi anlatımın için yukarıdaki akışı kullanabilirsin.
+
+TESLİMDE SON KONTROLLER
+- GitHub kodu ve Docker kurulumu temiz kopyada çalışmalı.
+- report.pdf, diyagram kaynakları/çizimleri ve API koleksiyonu bulunmalı.
+- Medium yazısı yayımlanmalı ve linki çalışmalı.
+- Demo YouTube'a yüklenmeli; görünürlük hocanın erişimine uygun olmalı.
+- Hocanın e-posta adresi ve sınıf içi gösterim saati doğrulanmalı.
+- PDF e-posta teslimi ile slayttaki BirDeHa teslimi birlikte kontrol edilmeli.
+- BirDeHa 24 Aralık 2026 00.00 gösteriyor: süre 23 Aralık gecesi doluyor.

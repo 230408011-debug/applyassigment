@@ -1,0 +1,38 @@
+<!doctype html><html lang="en"><meta charset="utf-8"><title>Pulsar Scout: A Database-to-Model-to-Database Project</title><body>
+<h1>Pulsar Scout: A Database-to-Model-to-Database Project</h1>
+<p><em>Özcan Öztürk — CMP307 Database Management Systems</em></p>
+<p>I built a small application to connect a PostgreSQL database with a machine learning model. The topic is pulsar candidate screening: given eight numeric measurements, the model estimates whether a labelled candidate is a pulsar or noise. The useful part of the project is the complete path from stored source records to saved and queryable predictions.</p>
+<h2>The data and the scope</h2>
+<p>The public <a href="https://archive.ics.uci.edu/dataset/372/htru2">UCI HTRU2 dataset</a> contains 17,898 examples. Positive pulsar labels are a minority. The project uses extracted measurements, not telescope images, coordinates or a live observatory connection. It is a benchmark screening tool, not a claim of a new discovery. Source attribution and the CSV checksum are stored with the project.</p>
+<h2>Starting the system with Docker</h2>
+<pre>cp .env.example .env
+# Choose a local POSTGRES_PASSWORD.
+docker compose up --build -d
+docker compose ps</pre>
+<p>PostgreSQL and the Flask/Gunicorn application run as separate Compose services on one machine. The browser opens localhost:5055. Database records and model files use persistent named volumes. The database port is bound to localhost. This local teaching application has no public login system, so it should not be exposed as a public service without additional controls.</p>
+<h2>Designing the tables</h2>
+<p>The schema separates dataset versions, candidate measurements, model runs, split membership, metrics and predictions. A source record is not copied into a new dataset for every model. The run_samples table represents the many-to-many relationship between runs and candidates. Composite foreign keys allow prediction rows only for test members, while a trigger checks dataset agreement.</p>
+<p>The core design follows the course's relational modelling and normalization principles. The metric table is a deliberate derived audit snapshot. Tests recalculate its confusion counts from predictions instead of assuming that duplicated derived values can never disagree.</p>
+<p><strong>Insert docs/architecture.png and docs/schema.png here when publishing.</strong> Editable Mermaid sources accompany both figures.</p>
+<h2>The two-way data flow</h2>
+<p>The original CSV is used once to generate reproducible INSERT statements. After import, the model reads directly from PostgreSQL:</p>
+<pre>SELECT id, feature_1, feature_2, feature_3, feature_4,
+       feature_5, feature_6, feature_7, feature_8, true_label
+FROM candidates WHERE dataset_id = %s ORDER BY id;</pre>
+<p>Only the eight measurements enter the feature matrix. The target is used as y and the ID is used to link records. After evaluation, split membership, predictions, metrics and completed status are written in one SQL transaction. The browser then queries the saved results through a JOIN view. This is the part that makes the database more than an input file location.</p>
+<h2>Training without using the test data for selection</h2>
+<p>A stratified seed-42 split reserves 3,580 records for the holdout and leaves 14,318 for training. Three fixed models are compared: majority Dummy, balanced Logistic Regression and balanced Random Forest. Logistic Regression uses a StandardScaler inside a pipeline. Three-fold cross-validation on the training set selects by positive-class F1, and the decision threshold remains 0.5. Scaling is learned separately inside each training fold.</p>
+<h2>What the measurements showed</h2>
+<p>The cross-validation choice was Random Forest. Its held-out F1 was 0.8892, precision 0.8975 and recall 0.8811. It found 289 positive examples, missed 39 and produced 33 false alarms. Logistic Regression had higher recall, so Random Forest is not better by every criterion.</p>
+<p>The majority baseline had accuracy 0.9084 but zero positive recall and F1. That is a useful reminder that class imbalance can make accuracy look reassuring while the actual task is not being solved. The interface shows both metrics and false-negative examples.</p>
+<p><strong>Insert docs/results.png here.</strong> The figure was generated from results read back from SQL.</p>
+<h2>A small database performance experiment</h2>
+<p>I measured eight-column numeric transport against building a JSONB feature array from the same rows. After warm-up, the seven-run medians were 59.822 ms and 224.567 ms respectively. This includes SQL serialization and client decoding; it is not a comparison of independently stored relational and JSON tables.</p>
+<p>A run-specific ranking query was also measured with EXPLAIN ANALYZE. Its median server execution time was 0.027 ms with the composite score index and 1.086 ms without it, at the recorded data size. These are warm-cache measurements on one machine and should not be generalized to every workload. Raw repetitions and plans are included in the evidence snapshot.</p>
+<h2>Checks and limitations</h2>
+<p>Integration tests cover repeated import, API errors, finite-value and label constraints, split consistency, metric counts and transaction rollback. Browser tests cover ranking, filtering, pagination, measurement inspection and narrow-screen layout. Docker training reproduced the reported F1 values.</p>
+<p>The source has no observing-session identifiers for grouping the split, so this random-record evaluation does not establish performance on a new telescope campaign. Model scores are not calibrated probabilities. Before real deployment, independent validation, review policies, authentication and background jobs would be needed.</p>
+<h2>Source and further reading</h2>
+<ul><li>Lyon, R. (2015). HTRU2. UCI Machine Learning Repository. <a href="https://doi.org/10.24432/C5DK6R">Dataset DOI</a>. CC BY 4.0.</li><li>Lyon et al. (2016). Fifty years of pulsar candidate selection. <a href="https://doi.org/10.1093/mnras/stw656">MNRAS paper</a>.</li><li><a href="https://www.postgresql.org/docs/16/">PostgreSQL 16 documentation</a>.</li><li><a href="https://scikit-learn.org/stable/common_pitfalls.html">scikit-learn: data leakage and pipelines</a>.</li></ul>
+<p><strong>Publication step:</strong> add the verified GitHub branch and YouTube demo links before publishing. This file is a prepared article, not an already published Medium page.</p>
+</body></html>

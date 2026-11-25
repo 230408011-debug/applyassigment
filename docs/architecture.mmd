@@ -1,4 +1,4 @@
-flowchart LR
+flowchart TB
     S[HTRU2 source archive\nCSV imported once] -->|Validated INSERT statements| DB[(PostgreSQL 16\nProvenance and candidates)]
     U[Browser review panel] <-->|HTTP / JSON :5055| A[Flask API / Gunicorn]
     A <-->|SQL over TCP :5432| DB
@@ -6,7 +6,6 @@ flowchart LR
     DB -->|SQL feature projection| M
     M -->|Transaction: memberships, metrics, predictions| DB
     M -->|Fitted pipeline + SHA-256| V[Model artifact volume]
-    DB -->|JOIN prediction_review| A
     subgraph One_machine[Single-machine Docker Compose deployment]
       A
       DB

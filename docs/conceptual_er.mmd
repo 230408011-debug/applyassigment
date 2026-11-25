@@ -1,10 +1,10 @@
 flowchart LR
-    D[DATASET VERSION] --- R1{CONTAINS}
-    R1 --- C[CANDIDATE]
-    D --- R2{USED BY}
-    R2 --- R[MODEL RUN]
-    R --- R3{PARTICIPATES}
-    R3 --- C
+    D[DATASET VERSION] ---|1| R1{CONTAINS}
+    R1 ---|N| C[CANDIDATE]
+    D ---|1| R2{USED BY}
+    R2 ---|N| R[MODEL RUN]
+    R ---|M| R3{PARTICIPATES}
+    R3 ---|N| C
     R3 --- Sub([subset: train or test])
     D --- DK([id: primary key])
     C --- CK([id: primary key])
