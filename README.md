@@ -17,7 +17,7 @@ cd pulsar-scout
 
 The technical report is `docs/report.pdf`. Editable diagrams, OpenAPI, Postman,
 an unpublished Medium draft and Turkish defence notes are in `docs/`. The
-delivery ZIP includes the recorded MP4 demo. See `docs/delivery_checklist.txt`
+delivery ZIP includes the recorded MP4 demo, also available as `docs/demo.mp4`. See `docs/delivery_checklist.txt`
 for the remaining publication and submission steps.
 
 ## Quick start with Docker
