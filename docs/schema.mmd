@@ -1,0 +1,59 @@
+erDiagram
+    direction TB
+    DATASET_VERSIONS ||--o{ CANDIDATES : contains
+    DATASET_VERSIONS ||--o{ MODEL_RUNS : used_by
+    MODEL_RUNS ||--o{ RUN_SAMPLES : records
+    CANDIDATES ||--o{ RUN_SAMPLES : participates
+    MODEL_RUNS ||--o| RUN_METRICS : has
+    RUN_SAMPLES ||--o| PREDICTIONS : test_only
+    DATASET_VERSIONS {
+        bigint id PK
+        char64 sha256 UK
+        text source_url
+        int expected_rows
+    }
+    CANDIDATES {
+        bigint id PK
+        bigint dataset_id FK
+        int source_row UK
+        float8 feature_1
+        float8 feature_2
+        float8 feature_3
+        float8 feature_4
+        float8 feature_5
+        float8 feature_6
+        float8 feature_7
+        float8 feature_8
+        smallint true_label
+    }
+    MODEL_RUNS {
+        uuid id PK
+        uuid batch_id
+        bigint dataset_id FK
+        text algorithm
+        int seed
+        float8 threshold
+        float8 cv_f1
+        boolean selected
+        text status
+    }
+    RUN_SAMPLES {
+        uuid run_id PK,FK
+        bigint candidate_id PK,FK
+        text subset
+    }
+    RUN_METRICS {
+        uuid run_id PK,FK
+        float8 accuracy
+        float8 precision_score
+        float8 recall
+        float8 f1
+        float8 average_precision
+    }
+    PREDICTIONS {
+        uuid run_id PK,FK
+        bigint candidate_id PK,FK
+        text subset FK
+        float8 probability
+        smallint predicted_label
+    }

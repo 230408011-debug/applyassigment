@@ -1,0 +1,84 @@
+{
+  "info": {
+    "name": "Pulsar Scout \u2014 CMP307",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "http://localhost:5055"
+    },
+    {
+      "key": "run_id",
+      "value": "paste-a-completed-run-uuid-here"
+    }
+  ],
+  "item": [
+    {
+      "name": "Health",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": "{{base_url}}/api/health"
+      }
+    },
+    {
+      "name": "Counts",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": "{{base_url}}/api/overview"
+      }
+    },
+    {
+      "name": "Import source",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{base_url}}/api/import",
+        "body": {
+          "mode": "raw",
+          "raw": "{}"
+        }
+      }
+    },
+    {
+      "name": "Train models",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{base_url}}/api/train",
+        "body": {
+          "mode": "raw",
+          "raw": "{\"seed\": 42}"
+        }
+      }
+    },
+    {
+      "name": "History",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": "{{base_url}}/api/runs"
+      }
+    },
+    {
+      "name": "Review saved predictions",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": "{{base_url}}/api/runs/{{run_id}}/predictions?outcome=FP&limit=20"
+      }
+    }
+  ]
+}

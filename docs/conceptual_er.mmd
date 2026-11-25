@@ -1,0 +1,16 @@
+flowchart LR
+    D[DATASET VERSION] --- R1{CONTAINS}
+    R1 --- C[CANDIDATE]
+    D --- R2{USED BY}
+    R2 --- R[MODEL RUN]
+    R --- R3{PARTICIPATES}
+    R3 --- C
+    R3 --- Sub([subset: train or test])
+    D --- DK([id: primary key])
+    C --- CK([id: primary key])
+    R --- RK([id: primary key])
+    R3 --- Out([prediction and score\noptional, test members only])
+    classDef entity fill:#e8f1f6,stroke:#245d73;
+    classDef relationship fill:#fff,stroke:#245d73;
+    class D,C,R entity;
+    class R1,R2,R3 relationship;

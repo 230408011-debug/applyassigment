@@ -1,0 +1,73 @@
+openapi: 3.0.3
+info:
+  title: Pulsar Scout API
+  version: 1.0.0
+  description: Local educational benchmark. No authentication; do not expose publicly without adding access control.
+servers:
+  - url: http://localhost:5055
+paths:
+  /api/health:
+    get:
+      summary: Verify PostgreSQL connectivity and version
+      responses:
+        '200': {description: Database reachable}
+        '503': {description: Database unavailable}
+  /api/overview:
+    get:
+      summary: Database counts and source provenance
+      responses:
+        '200': {description: Candidate, class, run and prediction counts}
+  /api/import:
+    post:
+      summary: Run the bundled idempotent INSERT script
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: {type: object}
+            example: {}
+      responses:
+        '200': {description: Current imported candidate count}
+        '400': {description: JSON object required}
+  /api/train:
+    post:
+      summary: Cross-validate three fixed models and save held-out results
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                seed: {type: integer, minimum: 0, maximum: 4294967295, default: 42}
+      responses:
+        '201': {description: Batch id, selected model and three result records}
+        '400': {description: Invalid seed or missing dataset}
+        '409': {description: Another experiment is running}
+        '500': {description: Training or persistence failed}
+  /api/runs:
+    get:
+      summary: Runs joined to saved metrics
+      responses:
+        '200': {description: Object with an items array}
+  /api/runs/{run_id}/predictions:
+    get:
+      summary: Filter and paginate saved predictions
+      parameters:
+        - {name: run_id, in: path, required: true, schema: {type: string, format: uuid}}
+        - {name: outcome, in: query, schema: {type: string, enum: ['', TP, FP, FN, TN]}}
+        - {name: min_probability, in: query, schema: {type: number, minimum: 0, maximum: 1, default: 0}}
+        - {name: limit, in: query, schema: {type: integer, minimum: 1, maximum: 100, default: 20}}
+        - {name: offset, in: query, schema: {type: integer, minimum: 0, default: 0}}
+      responses:
+        '200': {description: items, total, limit and offset}
+        '400': {description: Invalid filters or UUID}
+        '404': {description: Run missing}
+  /api/candidates/{candidate_id}:
+    get:
+      summary: Original feature vector and label
+      parameters:
+        - {name: candidate_id, in: path, required: true, schema: {type: integer, minimum: 1}}
+      responses:
+        '200': {description: Candidate row with eight positional features}
+        '404': {description: Candidate missing}
