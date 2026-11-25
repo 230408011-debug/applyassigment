@@ -30,8 +30,10 @@ PDF REPORT SECTIONS
        README, .env.example; secrets excluded.
 [PASS] Findings, weaknesses, real-world/scaling assessment: sections 5,6,7,8.
 [PASS] IEEE academic/official references with inline citations: final page.
-[PENDING] Medium publication: adapted article exists with supplied figure links;
-          no actual Medium publication URL has been verified.
+[LINK PROVIDED] Medium article URL supplied by the author:
+https://medium.com/@ozturkozcan838/pulsar-scout-a-database-to-model-to-database-project-4994def1e9fc
+       Article/figures reviewed in supplied editor screenshots. Automated public
+       fetch returned HTTP 403; independent access verification remains limited.
 
 ADDITIONAL LECTURE / DELIVERY REQUIREMENTS
 [PASS] Individual project with frontend + backend.
@@ -43,10 +45,10 @@ ADDITIONAL LECTURE / DELIVERY REQUIREMENTS
 [PASS] GitHub branch database-pulsar pushed and remote commit verified.
 [PASS] Working application recording available: docs/demo.mp4.
 [PASS] YouTube demo uploaded as unlisted on Software CN: https://www.youtube.com/watch?v=wj3nfrJxYe8
-[PASS] Medium draft contains Docker startup section; publication remains pending.
+[PASS] Medium article copy contains Docker startup section; author supplied URL.
 [PASS] BirDeHa Project id 528689: report, ZIP, demo and links file uploaded.
        Portal status: submitted for grading; editing remains available.
-       Saved downloads verified against local SHA-256. Publication links pending.
+       Saved downloads verified against local SHA-256. YouTube/Medium links included.
 [PENDING] Report + GitHub/demo/Medium/diagram files via instructor email.
           Draft exists; no message sent and no substitute links fabricated.
 [PENDING] Live class review during the week before final exam. Exact date must

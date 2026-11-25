@@ -15,5 +15,6 @@ https://github.com/230408011-debug/applyassigment/blob/database-pulsar/docs/demo
 Editable architecture and relational/conceptual diagrams:
 https://github.com/230408011-debug/applyassigment/tree/database-pulsar/docs
 
-Medium publication: pending. The adapted article and figures are in the package.
+Medium article (publication link supplied by the author):
+https://medium.com/@ozturkozcan838/pulsar-scout-a-database-to-model-to-database-project-4994def1e9fc
 Instructor email and in-class review have not been completed.

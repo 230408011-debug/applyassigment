@@ -1,5 +1,5 @@
 DRAFT ONLY — NOT SENT
-Replace the Medium URL placeholder before sending; confirm recipient separately.
+Publication URLs included; confirm recipient before sending.
 
 Subject: CMP307 Final Project — Pulsar Scout — 230408011
 
@@ -13,7 +13,7 @@ Code and setup instructions:
 https://github.com/230408011-debug/applyassigment/tree/database-pulsar
 
 Demo video: https://www.youtube.com/watch?v=wj3nfrJxYe8
-Medium article: [REQUIRED: actual published Medium URL]
+Medium article: https://medium.com/@ozturkozcan838/pulsar-scout-a-database-to-model-to-database-project-4994def1e9fc
 
 Attached: technical report and source package including Dockerfile, SQL schema,
 editable diagrams, API requests and reproducible startup instructions.

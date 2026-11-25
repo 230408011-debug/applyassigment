@@ -10,6 +10,8 @@ exercise, not proof of discovering a new pulsar.
 
 Working demo on YouTube (unlisted): https://www.youtube.com/watch?v=wj3nfrJxYe8
 
+Medium article: https://medium.com/@ozturkozcan838/pulsar-scout-a-database-to-model-to-database-project-4994def1e9fc
+
 ## Download and deliverables
 
 ```sh
@@ -18,7 +20,7 @@ cd pulsar-scout
 ```
 
 The technical report is `docs/report.pdf`. Editable diagrams, OpenAPI, Postman,
-an unpublished Medium draft and Turkish defence notes are in `docs/`. The
+the local Medium article copy and Turkish defence notes are in `docs/`. The
 delivery ZIP includes the recorded MP4 demo, also available as `docs/demo.mp4`. See `docs/delivery_checklist.txt`
 for the remaining publication and submission steps.
 
