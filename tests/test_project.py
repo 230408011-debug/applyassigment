@@ -77,31 +77,28 @@ def test_database_rejects_invalid_labels_and_infinite_features():
                     c.execute(f'UPDATE candidates SET {column}=%s WHERE id=%s',(value,row['id']))
 
 def test_fk_guard_prevents_training_predictions_and_atomic_rollback():
-    with connect() as c:
-        with c.transaction():
-            dataset=c.execute('SELECT id FROM dataset_versions LIMIT 1').fetchone()['id']
-            ids=[r['id'] for r in c.execute('SELECT id FROM candidates ORDER BY id LIMIT 2').fetchall()]
-            run=str(uuid.uuid4())
-            c.execute("INSERT INTO model_runs(id,batch_id,dataset_id,algorithm,seed,threshold,cv_f1,status,parameters,train_count,test_count,feature_query_ms) VALUES (%s,%s,%s,'Dummy',42,.5,0,'running','{}',1,1,0)",(run,str(uuid.uuid4()),dataset))
-            with pytest.raises(RuntimeError,match='Test rollback'):
-                save_results(c,run,np.array(ids),[0],[1],[.5],[1],{},0,None,fail=True)
-            assert c.execute('SELECT count(*) AS n FROM predictions WHERE run_id=%s',(run,)).fetchone()['n']==0
-            assert c.execute('SELECT count(*) AS n FROM run_samples WHERE run_id=%s',(run,)).fetchone()['n']==0
-            c.execute("INSERT INTO run_samples VALUES (%s,%s,'train')",(run,ids[0]))
-            with pytest.raises(psycopg.errors.ForeignKeyViolation):
-                with c.transaction():
-                    c.execute('INSERT INTO predictions(run_id,candidate_id,probability,predicted_label) VALUES (%s,%s,.5,1)',(run,ids[0]))
-            # Prevent crossing two source dataset versions even if both ids exist.
-            other=c.execute("INSERT INTO dataset_versions(name,source_url,license,sha256,expected_rows) VALUES ('test','test','test',%s,1) RETURNING id",(str(uuid.uuid4()).replace('-','').ljust(64,'0'),)).fetchone()['id']
-            other_id=c.execute('INSERT INTO candidates(dataset_id,source_row,feature_1,feature_2,feature_3,feature_4,feature_5,feature_6,feature_7,feature_8,true_label) VALUES (%s,1,1,1,1,1,1,1,1,1,0) RETURNING id',(other,)).fetchone()['id']
-            with pytest.raises(psycopg.errors.CheckViolation):
-                with c.transaction():
-                    c.execute("INSERT INTO run_samples VALUES (%s,%s,'test')",(run,other_id))
-            # The outer test transaction is rolled back deliberately, preserving the real data.
-            raise RollbackTest()
+    with pytest.raises(RollbackTest):
+        with connect() as c:
+            with c.transaction():
+                dataset=c.execute('SELECT id FROM dataset_versions LIMIT 1').fetchone()['id']
+                ids=[r['id'] for r in c.execute('SELECT id FROM candidates ORDER BY id LIMIT 2').fetchall()]
+                run=str(uuid.uuid4())
+                c.execute("INSERT INTO model_runs(id,batch_id,dataset_id,algorithm,seed,threshold,cv_f1,status,parameters,train_count,test_count,feature_query_ms) VALUES (%s,%s,%s,'Dummy',42,.5,0,'running','{}',1,1,0)",(run,str(uuid.uuid4()),dataset))
+                with pytest.raises(RuntimeError,match='Test rollback'):
+                    save_results(c,run,np.array(ids),[0],[1],[.5],[1],{},0,None,fail=True)
+                assert c.execute('SELECT count(*) AS n FROM predictions WHERE run_id=%s',(run,)).fetchone()['n']==0
+                assert c.execute('SELECT count(*) AS n FROM run_samples WHERE run_id=%s',(run,)).fetchone()['n']==0
+                c.execute("INSERT INTO run_samples VALUES (%s,%s,'train')",(run,ids[0]))
+                with pytest.raises(psycopg.errors.ForeignKeyViolation):
+                    with c.transaction():
+                        c.execute('INSERT INTO predictions(run_id,candidate_id,probability,predicted_label) VALUES (%s,%s,.5,1)',(run,ids[0]))
+                # Prevent crossing two source dataset versions even if both ids exist.
+                other=c.execute("INSERT INTO dataset_versions(name,source_url,license,sha256,expected_rows) VALUES ('test','test','test',%s,1) RETURNING id",(str(uuid.uuid4()).replace('-','').ljust(64,'0'),)).fetchone()['id']
+                other_id=c.execute('INSERT INTO candidates(dataset_id,source_row,feature_1,feature_2,feature_3,feature_4,feature_5,feature_6,feature_7,feature_8,true_label) VALUES (%s,1,1,1,1,1,1,1,1,1,0) RETURNING id',(other,)).fetchone()['id']
+                with pytest.raises(psycopg.errors.CheckViolation):
+                    with c.transaction():
+                        c.execute("INSERT INTO run_samples VALUES (%s,%s,'test')",(run,other_id))
+                # The outer test transaction is rolled back deliberately, preserving the real data.
+                raise RollbackTest()
 
 class RollbackTest(Exception): pass
-# The wrapper converts the deliberate rollback into a passing test.
-_atomic_test=test_fk_guard_prevents_training_predictions_and_atomic_rollback
-def test_fk_guard_prevents_training_predictions_and_atomic_rollback():
-    with pytest.raises(RollbackTest): _atomic_test()
