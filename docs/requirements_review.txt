@@ -44,8 +44,9 @@ ADDITIONAL LECTURE / DELIVERY REQUIREMENTS
 [PASS] Working application recording available: docs/demo.mp4.
 [PENDING] YouTube publication: an actual YouTube URL is not available yet.
 [PASS] Medium draft contains Docker startup section; publication remains pending.
-[IN PROGRESS] BirDeHa project field: reviewed as correct course CMP307 / Project,
-              id 528689; file limit 512 MB each and at most 20 files.
+[PASS] BirDeHa Project id 528689: report, ZIP, demo and links file uploaded.
+       Portal status: submitted for grading; editing remains available.
+       Saved downloads verified against local SHA-256. Publication links pending.
 [PENDING] Report + GitHub/demo/Medium/diagram files via instructor email.
           Draft exists; no message sent and no substitute links fabricated.
 [PENDING] Live class review during the week before final exam. Exact date must

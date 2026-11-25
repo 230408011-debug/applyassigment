@@ -19,8 +19,9 @@ STILL REQUIRED FOR FINAL DELIVERY
   preparing to explain the application yourself during the live review.
 - Put the actual Medium and YouTube URLs into the email draft and final submission.
 - Confirm the instructor email address and send only after reviewing the contents.
-- Upload the complete final deliverables to the final project assignment in BirDeHa.
-  A copy in Personal files is storage, not an assignment submission.
+- BirDeHa Project id 528689 now contains report, ZIP, demo and links file;
+  status is submitted for grading and editing remains available. Update the
+  submission with actual Medium/YouTube URLs after publication.
 - Attend the live class review in the week before the final; confirm its exact date.
 
 DEADLINE
