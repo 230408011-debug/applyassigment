@@ -1,0 +1,35 @@
+PULSAR SCOUT — 230408011 — DELIVERY STATUS (25 November 2026)
+
+PREPARED AND VERIFIED
+- PostgreSQL 16 + Flask frontend/backend + Docker Compose and Dockerfile.
+- Original licensed HTRU2 dataset and idempotent SQL import.
+- Direct database training queries, train-only preprocessing and CV selection.
+- Predictions, split membership, metrics and model hashes persisted in SQL.
+- Five integration checks passed; real Docker training and browser UI checked.
+- Technical report PDF and editable LaTeX source.
+- Editable architecture/ER/schema diagrams, PNG and SVG exports.
+- OpenAPI and Postman request collection.
+- Turkish defence guide and publication-ready English Medium draft.
+- Real application demo MP4 with English explanatory captions; no voiceover.
+- Code: https://github.com/230408011-debug/applyassigment/tree/database-pulsar
+
+STILL REQUIRED FOR FINAL DELIVERY
+- Publish the adapted article on your Medium account, inserting supplied figures.
+- Upload the demo to YouTube and add the actual video URL. Captions do not replace
+  preparing to explain the application yourself during the live review.
+- Put the actual Medium and YouTube URLs into the email draft and final submission.
+- Confirm the instructor email address and send only after reviewing the contents.
+- Upload the complete final deliverables to the final project assignment in BirDeHa.
+  A copy in Personal files is storage, not an assignment submission.
+- Attend the live class review in the week before the final; confirm its exact date.
+
+DEADLINE
+Moodle shows 24 December 2026 00:00 (Istanbul): finish before the end of 23 December.
+Recheck Moodle for instructor changes. The earlier course slide assigns project 20%
+and final exam 50%; confirm whether the later project replaces the final exam.
+
+HONEST SCOPE
+This is benchmark classification, not discovery of an unknown pulsar. On the fixed
+holdout, selected Random Forest has F1=0.88923, with 33 FP and 39 FN. No external
+observing-campaign validation is available. No Medium/YouTube publication or
+instructor email is claimed in this package.

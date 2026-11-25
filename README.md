@@ -8,6 +8,18 @@ and the predictions and metrics are written back to PostgreSQL. Flask serves
 a review screen that queries the saved results. This is a public benchmark
 exercise, not proof of discovering a new pulsar.
 
+## Download and deliverables
+
+```sh
+git clone --branch database-pulsar --single-branch https://github.com/230408011-debug/applyassigment.git pulsar-scout
+cd pulsar-scout
+```
+
+The technical report is `docs/report.pdf`. Editable diagrams, OpenAPI, Postman,
+an unpublished Medium draft and Turkish defence notes are in `docs/`. The
+delivery ZIP includes the recorded MP4 demo. See `docs/delivery_checklist.txt`
+for the remaining publication and submission steps.
+
 ## Quick start with Docker
 
 Install Docker Desktop (or Docker Engine with Compose), then in this directory:

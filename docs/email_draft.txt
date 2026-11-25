@@ -1,0 +1,23 @@
+DRAFT ONLY — NOT SENT
+Replace both marked URL placeholders before sending; confirm recipient separately.
+
+Subject: CMP307 Final Project — Pulsar Scout — 230408011
+
+Dear Instructor,
+
+Please find my CMP307 Database Management Systems project, Pulsar Scout. It uses
+PostgreSQL for data storage and direct training queries, then saves model results
+and predictions back to the database for review in a Flask application.
+
+Code and setup instructions:
+https://github.com/230408011-debug/applyassigment/tree/database-pulsar
+
+Demo video: [REQUIRED: actual published YouTube URL]
+Medium article: [REQUIRED: actual published Medium URL]
+
+Attached: technical report and source package including Dockerfile, SQL schema,
+editable diagrams, API requests and reproducible startup instructions.
+
+Best regards,
+Özcan Öztürk
+230408011

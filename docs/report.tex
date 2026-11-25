@@ -1,6 +1,6 @@
 \documentclass[11pt,a4paper]{article}
 \usepackage[utf8]{inputenc}\usepackage[T1]{fontenc}\usepackage{lmodern,microtype,parskip}
-\usepackage[margin=2cm]{geometry}\usepackage{graphicx,booktabs,tabularx,array,enumitem,hyperref,fancyhdr}
+\usepackage[margin=2cm]{geometry}\usepackage{graphicx,booktabs,tabularx,array,enumitem,xurl,hyperref,fancyhdr}
 \hypersetup{colorlinks=true,urlcolor=blue,pdftitle={Pulsar Scout - Database and Machine Learning Integration},pdfauthor={Özcan Öztürk}}
 \setlength{\headheight}{14pt}\pagestyle{fancy}\fancyhf{}\fancyhead[L]{\small CMP307 -- Database Management Systems}\fancyhead[R]{\small Pulsar Scout}\fancyfoot[C]{\thepage}
 \setlist[itemize]{nosep}\setlist[enumerate]{itemsep=3pt}
@@ -25,7 +25,7 @@ Large candidate lists require a way to prioritize measurements for review. The t
 
 The main technical question is: \textit{Can a reproducible database-to-model-to-database workflow keep source records, experiment splits and predictions linked, while producing useful positive-class classification results?} A second question is how the chosen relational representation and ranking index affect processing time.
 
-PostgreSQL was chosen because typed numeric columns, keys, transactions, views and indexes fit this workflow. These mechanisms are used in applications requiring consistent linked data and auditable results [3]. It also matches the Docker/PostgreSQL setup used in the course. Flask provides a lightweight Python API, so the same application can use psycopg for SQL and scikit-learn for modelling.
+PostgreSQL was chosen because typed numeric columns, keys, transactions, views and indexes fit this workflow. These mechanisms are used in applications requiring consistent linked data and auditable results [3]. It also matches the Docker/PostgreSQL setup used in the course. Flask provides a lightweight Python API [6], so the same application can use psycopg for SQL [7] and scikit-learn for modelling.
 
 The prototype is single-user and single-machine. It has no live telescope connection, coordinates, login or external cloud service. Its value is the complete evidence trail through the database, not a claim of scientific novelty.
 
@@ -34,7 +34,7 @@ The prototype is single-user and single-machine. It has no live telescope connec
 \begin{center}\includegraphics[width=\linewidth,height=12cm,keepaspectratio]{architecture.png}\end{center}
 \textbf{Figure 1.} End-to-end architecture. Python modelling is part of the application container, not an independent remote service.
 
-The application and PostgreSQL are separate Compose services on one host. Browser-to-API communication is HTTP/JSON; the app connects to PostgreSQL over TCP port 5432. The host web port defaults to 5055 and can be changed. There is no cache layer or distributed processing.
+The application and PostgreSQL are separate Compose services on one host [5]. Browser-to-API communication is HTTP/JSON; the app connects to PostgreSQL over TCP port 5432. The host web port defaults to 5055 and can be changed. There is no cache layer or distributed processing.
 \begin{enumerate}
 \item Load original data using \texttt{sql/02\_seed.sql}. The source version is identified by a SHA-256 checksum and provenance record.
 \item Select the eight measurements and target with a parameterized SQL query. Candidate IDs are retained only to link results; neither IDs nor labels enter the feature matrix.
@@ -175,14 +175,14 @@ The source does not include observing-session or physical-object identifiers, so
 
 For larger workloads, next steps would include background training jobs, authentication, resource limits, more independent evaluation and a formal benchmark under concurrent load. The existing schema can retain many runs, but no distributed scalability has been measured. Improvement priorities should be chosen from actual workload and scientific needs rather than added only to make the architecture larger.
 
-\section*{References (APA)}
+\section*{References (IEEE)}
 \begin{enumerate}[label={[\arabic*]},leftmargin=1cm]
-\item Lyon, R. (2015). \textit{HTRU2} [Data set]. UCI Machine Learning Repository. \url{https://doi.org/10.24432/C5DK6R}
-\item Lyon, R. J., Stappers, B. W., Cooper, S., Brooke, J. M., \& Knowles, J. D. (2016). Fifty years of pulsar candidate selection: From simple filters to a new principled real-time classification approach. \textit{Monthly Notices of the Royal Astronomical Society, 459}(1), 1104--1123. \url{https://doi.org/10.1093/mnras/stw656}
-\item PostgreSQL Global Development Group. (n.d.). \textit{PostgreSQL 16 documentation: Constraints, indexes and EXPLAIN}. \url{https://www.postgresql.org/docs/16/}
-\item Scikit-learn developers. (n.d.). \textit{Common pitfalls and recommended practices}. \url{https://scikit-learn.org/stable/common_pitfalls.html}
-\item Docker Inc. (n.d.). \textit{Docker Compose documentation}. \url{https://docs.docker.com/compose/}
-\item Pallets. (n.d.). \textit{Flask documentation}. \url{https://flask.palletsprojects.com/}
-\item Psycopg team. (n.d.). \textit{Transactions management}. \url{https://www.psycopg.org/psycopg3/docs/basic/transactions.html}
+\item R. Lyon, ``HTRU2,'' UCI Machine Learning Repository, 2015. doi: 10.24432/C5DK6R. \url{https://doi.org/10.24432/C5DK6R}
+\item R. J. Lyon, B. W. Stappers, S. Cooper, J. M. Brooke, and J. D. Knowles, ``Fifty years of pulsar candidate selection: From simple filters to a new principled real-time classification approach,'' \textit{Monthly Notices of the Royal Astronomical Society}, vol. 459, no. 1, pp. 1104--1123, 2016. doi: 10.1093/mnras/stw656.
+\item PostgreSQL Global Development Group, ``PostgreSQL 16 documentation.'' [Online]. Available: \url{https://www.postgresql.org/docs/16/}. [Accessed: Nov. 25, 2026].
+\item Scikit-learn developers, ``Common pitfalls and recommended practices.'' [Online]. Available: \url{https://scikit-learn.org/stable/common_pitfalls.html}. [Accessed: Nov. 25, 2026].
+\item Docker Inc., ``Docker Compose documentation.'' [Online]. Available: \url{https://docs.docker.com/compose/}. [Accessed: Nov. 25, 2026].
+\item Pallets, ``Flask documentation.'' [Online]. Available: \url{https://flask.palletsprojects.com/}. [Accessed: Nov. 25, 2026].
+\item Psycopg team, ``Transactions management.'' [Online]. Available: \url{https://www.psycopg.org/psycopg3/docs/basic/transactions.html}. [Accessed: Nov. 25, 2026].
 \end{enumerate}
 \end{document}
